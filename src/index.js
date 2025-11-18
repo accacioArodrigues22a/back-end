@@ -1,5 +1,4 @@
 import express from "express"
-import { persons } from "./persons.js"
 import mysql from "mysql2"
 import cors from "cors"
 
@@ -13,7 +12,19 @@ app.use(express.json())
 // GET, POST, DELETE, PATCH, PUT
 
 app.get("/", (request, response) => {
-  response.json( persons )
+  const selectCommand = `
+    SELECT name, email, age, nickname 
+    FROM andressaaccacio_02ta
+  `
+
+  database.query(selectCommand, (error, users) => {
+    if (error){
+      console.log(error)
+      return
+    }
+
+    response.json(users)
+  })
 })
 
 app.post("/cadastrar", (request, response) => {
