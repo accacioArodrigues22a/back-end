@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import express from "express"
 import mysql from "mysql2"
 import cors from "cors"
@@ -43,6 +45,35 @@ app.post("/cadastrar", (request, response) => {
     }
 
       response.status(201).json({ message: "Usuário cadastrado com sucesso!" })
+  })
+})
+
+// rota para o login
+app.post("/login", (request, response) => {
+  const{ email, password } = request.body.user
+
+  //selecionar no banco o usuário que contém o email compatível
+  const selectCommand = "SELECT * FROM andressaaccacio_02ta WHERE email = ?"
+
+  database.query(selectCommand, [email], (error, user) => {
+    if(error){
+      console.log(error)
+      return
+    }
+
+    //user => array [ {name, email, ...} ]
+    //tamanho do array = array.length = user.length = 1
+
+    // verificar se o usuário existe e se a senha está incorreta
+    if(user.length === 0 || user[0].password !== password){
+      response.json({ message: "Usuário ou senha incorretos!" })
+      return
+    }
+
+    response.json({
+      id: user[0].id,
+      name: user[0].name
+    })
   })
 })
 
